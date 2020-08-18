@@ -103,7 +103,9 @@ class spJsonReader():
                     timelineType = SP_TIMELINE_FLIPX
                 elif ( timelineKeyList[j] == "flipY" ):
                     timelineType = SP_TIMELINE_FLIPY
-
+                else:
+                    continue
+                    # todo Added else and continue to fight "shear"
                 frames = bone[ timelineKeyList[j] ]
                 timelineDict = { "type": timelineType, "framesCount": list( frames ), "frames": list() }
 
@@ -216,7 +218,7 @@ class spJsonReader():
 
 
         # FFD (Skin Deform) timelines
-        ffd = jsonAnimation.get( "ffd", dict() )
+        ffd = jsonAnimation.get( "deform", dict() ) # todo changed ffd to deform
         skinsKeyList = list( ffd.keys() )
         for i in range( 0, len( skinsKeyList ) ):
 
