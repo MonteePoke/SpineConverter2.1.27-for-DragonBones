@@ -7,5 +7,5 @@ Python 3
 Drag'n'Drop .skel or .json file onto fastConverter.py
 
 ## Thanks
-To brachna for creating SpineConverter 2.1.27
-To KaoTheCow for the guide
+- To brachna for creating SpineConverter 2.1.27 
+- To KaoTheCow for the guide
