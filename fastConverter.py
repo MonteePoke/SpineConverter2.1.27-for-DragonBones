@@ -4,10 +4,7 @@ from spBinaryReader import spBinaryReader
 from spJsonReader import spJsonReader
 from spBinaryWriter import spBinaryWriter
 from spJsonWriter import spJsonWriter
-import json
-import logging
-
-logger = logging.getLogger('ftpuploader')
+import traceback
 
 try:
     if (len(sys.argv) >= 2):
@@ -29,11 +26,11 @@ try:
             skeletonData = jsonReader.readSkeletonDataFile(fileName)
             binaryWriter.writeSkeletonDataFile(skeletonData, fileName.replace(".json", ".skel"))
         else:
-            print("Invalid file type.")    
+            print("Invalid file type.")
+            input("Press enter to close")
     else:
-        print("Required arguments not found.")
-except Exception as e:
-    print(sys.exc_info()[0])
-    print(sys.exc_info()[1])
-    logger.error('Failed to upload to ftp: '+ str(e))
+        print("Required arguments not found")
+        input("Press enter to close")
+except Exception:
+    traceback.print_exc()
     input("Press enter to close")
