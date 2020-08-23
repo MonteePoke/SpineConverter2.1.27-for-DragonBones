@@ -1,5 +1,6 @@
 
 from spUtils import *
+from settings import SpineConverterSettings
 import json
 
 class spJsonReader():
@@ -322,6 +323,13 @@ class spJsonReader():
 
         attachment["attachmentType"] = getAttachmentTypeFromJsonToBinary( jsonAttachment.get( "type", None ) )
 
+        #todo skinnedMesh
+        if (self.settings.isSkinnedMeshesExperimental()):
+            if (attachment["attachmentType"] == SP_ATTACHMENT_MESH):
+                hull = jsonAttachment["hull"]
+                if (hull != 4 and hull != 8):
+                    attachment["attachmentType"] = SP_ATTACHMENT_SKINNED_MESH
+
         if ( attachment["attachmentType"] == SP_ATTACHMENT_REGION ):
 
             attachment["path"] = jsonAttachment.get( "path", None )
@@ -420,7 +428,8 @@ class spJsonReader():
         return d
 
 
-    def readSkeletonDataFile( self, path ):
+    def readSkeletonDataFile( self, path, settings):
+        self.settings = settings
 
         file = open( path, 'r' )
         text = file.read()

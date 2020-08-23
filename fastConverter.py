@@ -4,9 +4,11 @@ from spBinaryReader import spBinaryReader
 from spJsonReader import spJsonReader
 from spBinaryWriter import spBinaryWriter
 from spJsonWriter import spJsonWriter
+from settings import SpineConverterSettings
 import traceback
 
 try:
+    settings = SpineConverterSettings()
     if (len(sys.argv) >= 2):
         fileName = sys.argv[1]
         if (fileName.endswith(".skel")): 
@@ -23,7 +25,7 @@ try:
             jsonReader = spJsonReader()
             binaryWriter = spBinaryWriter()
 
-            skeletonData = jsonReader.readSkeletonDataFile(fileName)
+            skeletonData = jsonReader.readSkeletonDataFile(fileName, settings)
             binaryWriter.writeSkeletonDataFile(skeletonData, fileName.replace(".json", ".skel"))
         else:
             print("Invalid file type.")
