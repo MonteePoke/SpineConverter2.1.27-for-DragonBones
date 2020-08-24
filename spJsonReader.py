@@ -439,17 +439,16 @@ class spJsonReader():
 
         #todo copy slots but with different alphas
         if (settings.hasSeveralAnimations()):
-            slotArrays = []
+            slotArrays = dict()
             for i in  jsonData["animations"].keys():
-                slotsCopy = copy.deepcopy(jsonData["animations"][i]["slots"])
-                for j in slotsCopy:
-                    slotsCopy[j]["color"][0]["color"] = "FFFFFFFF"
-                slotArrays.append(slotsCopy)
+                for j in jsonData["animations"][i]["slots"]:
+                    if j not in slotArrays.keys():
+                        slotArrays[j]= {"color":[{"color":"FFFFFFFF","time":0}]}
             k = 0
             for i in jsonData["animations"].keys():
-                for j in range(len(slotArrays)):
-                    if (j != k):
-                        jsonData["animations"][i]["slots"].update(slotArrays[j])
+                for j in slotArrays.keys():
+                    if j not in jsonData["animations"][i]["slots"].keys():
+                        jsonData["animations"][i]["slots"][j] = slotArrays[j]
                 k = k + 1
 
         skeletonData = spStoredSkeletonData()
