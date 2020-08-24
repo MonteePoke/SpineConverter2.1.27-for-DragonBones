@@ -450,7 +450,7 @@ class spBinaryWriter():
 
             self.writeString( skeletonData["animations"][i]["name"] )
             self.writeAnimation( skeletonData["animations"][i], skeletonData )
-        
+
         file = open( path, 'wb' )
         file.write( self.m_byteArray )
         file.close()

@@ -2,6 +2,7 @@
 from spUtils import *
 from settings import SpineConverterSettings
 import json
+import copy
 
 class spJsonReader():
 
@@ -436,6 +437,21 @@ class spJsonReader():
         file.close()
         jsonData = json.loads( text, object_pairs_hook=self.renameDuplicateKeysInJson )
 
+        #todo copy slots but with different alphas
+        if (settings.hasSeveralAnimations()):
+            slotArrays = []
+            for i in  jsonData["animations"].keys():
+                slotsCopy = copy.deepcopy(jsonData["animations"][i]["slots"])
+                for j in slotsCopy:
+                    slotsCopy[j]["color"][0]["color"] = "FFFFFFFF"
+                slotArrays.append(slotsCopy)
+            k = 0
+            for i in jsonData["animations"].keys():
+                for j in range(len(slotArrays)):
+                    if (j != k):
+                        jsonData["animations"][i]["slots"].update(slotArrays[j])
+                k = k + 1
+
         skeletonData = spStoredSkeletonData()
 
         skeletonData["hash"] = jsonData["skeleton"].get( "hash", None )
@@ -555,5 +571,5 @@ class spJsonReader():
                 animation = self.readAnimation( jsonData["animations"][animationsKeyList[i]],
                                                 animationsKeyList[i], skeletonData )
                 skeletonData["animations"].append( animation )
-        
+
         return skeletonData

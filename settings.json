@@ -1,3 +1,4 @@
 {
-	"skinnedMeshesExperimental" : true
+	"skinnedMeshesExperimental" : true,
+	"severalAnimations" : true
 }
