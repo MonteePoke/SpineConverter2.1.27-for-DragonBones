@@ -3,7 +3,6 @@ import json
 
 class SpineConverterSettings:
     def __init__(self):
-
         try:
             file = open('settings.json', 'r')
             text = file.read()
@@ -16,4 +15,10 @@ class SpineConverterSettings:
     def isSkinnedMeshesExperimental(self) -> bool:
         if "skinnedMeshesExperimental" in self.settings.keys():
             return self.settings["skinnedMeshesExperimental"]
+        return False
+
+
+    def hasSeveralAnimations(self) -> bool:
+        if "severalAnimations" in self.settings.keys():
+            return self.settings["severalAnimations"]
         return False
