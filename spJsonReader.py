@@ -441,9 +441,10 @@ class spJsonReader():
         if (settings.hasSeveralAnimations()):
             slotArrays = dict()
             for i in  jsonData["animations"].keys():
-                for j in jsonData["animations"][i]["slots"]:
-                    if j not in slotArrays.keys():
-                        slotArrays[j]= {"color":[{"color":"FFFFFFFF","time":0}]}
+                if "slots" in jsonData["animations"][i].keys():
+                    for j in jsonData["animations"][i]["slots"]:
+                        if j not in slotArrays.keys():
+                            slotArrays[j]= {"color":[{"color":"FFFFFFFF","time":0}]}
             k = 0
             for i in jsonData["animations"].keys():
                 for j in slotArrays.keys():
