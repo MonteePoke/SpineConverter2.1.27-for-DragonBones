@@ -448,8 +448,9 @@ class spJsonReader():
             k = 0
             for i in jsonData["animations"].keys():
                 for j in slotArrays.keys():
-                    if j not in jsonData["animations"][i]["slots"].keys():
-                        jsonData["animations"][i]["slots"][j] = slotArrays[j]
+                    if "slots" in jsonData["animations"][i].keys():
+                        if j not in jsonData["animations"][i]["slots"].keys():
+                            jsonData["animations"][i]["slots"][j] = slotArrays[j]
                 k = k + 1
 
         skeletonData = spStoredSkeletonData()
