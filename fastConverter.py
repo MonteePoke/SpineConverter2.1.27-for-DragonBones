@@ -5,6 +5,7 @@ from spJsonReader import spJsonReader
 from spBinaryWriter import spBinaryWriter
 from spJsonWriter import spJsonWriter
 from settings import SpineConverterSettings
+import re
 import traceback
 
 try:
@@ -30,10 +31,10 @@ try:
             if settings.isAutoRenameOn(): # DragonBones
                 try:
                     extensions = [".json", ".png", ".atlas"]
-                    oldName = os.path.basename(fileName).strip(".json")
-                    newName = oldName.replace("sprite", ".sprite.")
+                    oldName =  os.path.basename(fileName)[:-5]
+                    newName = re.sub('_\d*$', '', oldName.replace("sprite", ".sprite."))
                     folderPath = os.path.dirname(fileName)
-                    fileName = fileName.replace("sprite", ".sprite.")
+                    fileName = folderPath + os.path.sep + newName + ".json"
                     for foundName in os.listdir(folderPath):
                         foundFileName, foundFileExtension = os.path.splitext(foundName)
                         if foundFileName == oldName and foundFileExtension in extensions:
@@ -48,7 +49,7 @@ try:
                             os.rename(folderPath + os.path.sep + foundName, folderPath + os.path.sep + newName + foundFileExtension)
                 except Exception:
                     print("Error while trying to rename file, consider turning it of in settings.json")
-                    pass
+                    raise
 
             binaryWriter.writeSkeletonDataFile(skeletonData, fileName.replace(".json", ".skel"))
         else:
