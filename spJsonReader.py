@@ -107,7 +107,7 @@ class spJsonReader():
                     timelineType = SP_TIMELINE_FLIPY
                 else:
                     continue
-                    # todo Added else and continue to fight "shear"
+                    # DragonBones Added else and continue to fight "shear"
                 frames = bone[ timelineKeyList[j] ]
                 timelineDict = { "type": timelineType, "framesCount": list( frames ), "frames": list() }
 
@@ -220,7 +220,7 @@ class spJsonReader():
 
 
         # FFD (Skin Deform) timelines
-        ffd = jsonAnimation.get( "deform", dict() ) # todo changed ffd to deform
+        ffd = jsonAnimation.get( "deform", dict() ) # DragonBones changed ffd to deform
         skinsKeyList = list( ffd.keys() )
         for i in range( 0, len( skinsKeyList ) ):
 
@@ -324,7 +324,7 @@ class spJsonReader():
 
         attachment["attachmentType"] = getAttachmentTypeFromJsonToBinary( jsonAttachment.get( "type", None ) )
 
-        #todo skinnedMesh
+        #DragonBones skinnedMesh
         if (self.settings.isSkinnedMeshesExperimental()):
             if (attachment["attachmentType"] == SP_ATTACHMENT_MESH):
                 hull = jsonAttachment["hull"]
@@ -437,7 +437,7 @@ class spJsonReader():
         file.close()
         jsonData = json.loads( text, object_pairs_hook=self.renameDuplicateKeysInJson )
 
-        #todo copy slots but with different alphas
+        #DragonBones prevents character from going invisible
         if (settings.hasSeveralAnimations()):
             slotArrays = dict()
             for i in  jsonData["animations"].keys():

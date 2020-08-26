@@ -26,6 +26,30 @@ try:
             binaryWriter = spBinaryWriter()
 
             skeletonData = jsonReader.readSkeletonDataFile(fileName, settings)
+
+            if settings.isAutoRenameOn(): # DragonBones
+                try:
+                    extensions = [".json", ".png", ".atlas"]
+                    oldName = os.path.basename(fileName).strip(".json")
+                    newName = oldName.replace("sprite", ".sprite.")
+                    folderPath = os.path.dirname(fileName)
+                    fileName = fileName.replace("sprite", ".sprite.")
+                    for foundName in os.listdir(folderPath):
+                        foundFileName, foundFileExtension = os.path.splitext(foundName)
+                        if foundFileName == oldName and foundFileExtension in extensions:
+                            if foundFileExtension == ".atlas":
+                                file = open(folderPath + os.path.sep + foundName, "r+")
+                                text = file.read()
+                                text = text.replace(oldName, newName)
+                                file.seek(0)
+                                file.write(text)
+                                file.truncate()
+                                file.close()
+                            os.rename(folderPath + os.path.sep + foundName, folderPath + os.path.sep + newName + foundFileExtension)
+                except Exception:
+                    print("Error while trying to rename file, consider turning it of in settings.json")
+                    pass
+
             binaryWriter.writeSkeletonDataFile(skeletonData, fileName.replace(".json", ".skel"))
         else:
             print("Invalid file type.")

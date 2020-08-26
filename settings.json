@@ -1,4 +1,5 @@
 {
 	"skinnedMeshesExperimental" : true,
-	"severalAnimations" : true
+	"severalAnimations" : true,
+	"autoRename" : true
 }

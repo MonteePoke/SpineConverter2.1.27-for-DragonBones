@@ -15,10 +15,15 @@ class SpineConverterSettings:
     def isSkinnedMeshesExperimental(self) -> bool:
         if "skinnedMeshesExperimental" in self.settings.keys():
             return self.settings["skinnedMeshesExperimental"]
-        return False
+        return True
 
 
     def hasSeveralAnimations(self) -> bool:
         if "severalAnimations" in self.settings.keys():
             return self.settings["severalAnimations"]
-        return False
+        return True
+
+    def isAutoRenameOn(self) -> bool:
+        if "autoRename" in self.settings.keys():
+            return self.settings["autoRename"]
+        return True
