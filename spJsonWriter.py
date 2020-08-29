@@ -399,6 +399,17 @@ class spJsonWriter():
             color = self.getColorString( mesh )
             if ( color != "ffffffff" ):
                 jsonAttachment[placeholderName]["color"] = color
+            # DragonBones start
+            if "edges" in mesh.keys():
+                if ( len( mesh["edges"] ) > 0 ):
+                    jsonAttachment[placeholderName]["edges"] = mesh["edges"]
+            if "width" in mesh.keys():
+                if ( mesh["width"] > 0 ):
+                    jsonAttachment[placeholderName]["width"] = mesh["width"]
+            if "height" in mesh.keys():
+                if ( mesh["height"] > 0 ):
+                    jsonAttachment[placeholderName]["height"] = mesh["height"]
+            # DragonBones end
 
         elif ( attachment["attachmentType"] == SP_ATTACHMENT_SKINNED_MESH ):
 
