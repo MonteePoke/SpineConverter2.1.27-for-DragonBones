@@ -27,3 +27,13 @@ class SpineConverterSettings:
         if "autoRename" in self.settings.keys():
             return self.settings["autoRename"]
         return True
+
+    def isAddEmptyAnimationsOn(self) -> bool:
+        if "addEmptyAnimations" in self.settings.keys():
+            return self.settings["addEmptyAnimations"]
+        return True
+
+    def isFixMeshes(self) -> bool:
+        if "fixMeshes" in self.settings.keys():
+            return self.settings["fixMeshes"]
+        return True
