@@ -23,9 +23,12 @@ def addEmptyAnimations(skeletonData, fileName):
 def fixMeshes(skeletonData, fileName):
     try:
         atlas = readAtlasFile(fileName.replace(".skel", ".atlas"))
-        atlasSections = atlas[0]["regionSections"]
+        for i in range(0, len(atlas)):
+            if "regionSections" in atlas[i].keys():
+                atlasSections = atlas[i]["regionSections"]
     except:
         print("Coulnd't find assosiated .atlas file")
+        raise
 
     for slot in skeletonData["skins"][0]["slots"]:
         for attachment in slot["attachments"]:

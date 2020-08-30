@@ -327,8 +327,9 @@ class spJsonReader():
         #DragonBones skinnedMesh
         if (self.settings.isSkinnedMeshesExperimental()):
             if (attachment["attachmentType"] == SP_ATTACHMENT_MESH):
-                hull = jsonAttachment["hull"]
-                if (hull != 4 and hull != 8):
+                uvsCount = len(jsonAttachment["uvs"])
+                verticesCount = len(jsonAttachment["vertices"])
+                if verticesCount > uvsCount:
                     attachment["attachmentType"] = SP_ATTACHMENT_SKINNED_MESH
 
         if ( attachment["attachmentType"] == SP_ATTACHMENT_REGION ):
@@ -437,21 +438,25 @@ class spJsonReader():
         file.close()
         jsonData = json.loads( text, object_pairs_hook=self.renameDuplicateKeysInJson )
 
-        #DragonBones prevents character from going invisible
+        # DragonBones start prevents character from going invisible
         if (settings.hasSeveralAnimations()):
-            slotArrays = dict()
-            for i in  jsonData["animations"].keys():
-                if "slots" in jsonData["animations"][i].keys():
-                    for j in jsonData["animations"][i]["slots"]:
-                        if j not in slotArrays.keys():
-                            slotArrays[j]= {"color":[{"color":"FFFFFFFF","time":0}]}
-            k = 0
-            for i in jsonData["animations"].keys():
-                for j in slotArrays.keys():
+            if "animations" in jsonData.keys():
+                slotArrays = dict()
+                for i in  jsonData["animations"].keys():
                     if "slots" in jsonData["animations"][i].keys():
-                        if j not in jsonData["animations"][i]["slots"].keys():
-                            jsonData["animations"][i]["slots"][j] = slotArrays[j]
-                k = k + 1
+                        for j in jsonData["animations"][i]["slots"]:
+                            if j not in slotArrays.keys():
+                                slotArrays[j]= {"color":[{"color":"FFFFFFFF","time":0}]}
+                k = 0
+                for i in jsonData["animations"].keys():
+                    for j in slotArrays.keys():
+                        if "slots" in jsonData["animations"][i].keys():
+                            if j not in jsonData["animations"][i]["slots"].keys():
+                                jsonData["animations"][i]["slots"][j] = slotArrays[j]
+                    k = k + 1
+            else:
+                jsonData["animations"] = dict()
+        # DragonBones end
 
         skeletonData = spStoredSkeletonData()
 

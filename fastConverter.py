@@ -40,7 +40,9 @@ for arg in args:
                     try:
                         extensions = [".json", ".png", ".atlas"]
                         oldName =  os.path.basename(fileName)[:-5]
-                        newName = re.sub('_\d*$', '', oldName.replace("sprite", ".sprite."))
+                        newName = re.sub('_\d*$', '', oldName)
+                        if oldName.find(".sprite.") == -1:
+                            newName = newName.replace("sprite", ".sprite.")
                         folderPath = os.path.dirname(fileName)
                         fileName = folderPath + os.path.sep + newName + ".json"
                         for foundName in os.listdir(folderPath):
