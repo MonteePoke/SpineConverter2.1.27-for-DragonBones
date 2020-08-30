@@ -463,7 +463,10 @@ class spJsonWriter():
         jsonData = { "skeleton": {} }
 
         jsonData["skeleton"]["hash"] = skeletonData["hash"]
-        jsonData["skeleton"]["spine"] = skeletonData["version"]
+        if skeletonData["version"] == None:
+            jsonData["skeleton"]["spine"] = "2.1.27"
+        else:
+            jsonData["skeleton"]["spine"] = skeletonData["version"]
         jsonData["skeleton"]["width"] = skeletonData["width"]
         jsonData["skeleton"]["height"] = skeletonData["height"]
 
