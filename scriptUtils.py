@@ -7,7 +7,7 @@ def addEmptyAnimations(skeletonData, fileName):
     type = re.search("sprite\.?(.*).json", fileName).group(1)
     types = [type]
     if type == "defend":
-        types.push("death")
+        types.append("death")
 
     for j in types:
         hasAnimation = False

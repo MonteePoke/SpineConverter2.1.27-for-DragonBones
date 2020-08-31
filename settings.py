@@ -1,16 +1,19 @@
 import json
-
+import os
+import sys
 
 class SpineConverterSettings:
     def __init__(self):
         try:
-            file = open('settings.json', 'r')
+            path = os.path.join(os.path.dirname(os.path.realpath(sys.argv[0])), 'settings.json')
+            file = open(path, 'r')
             text = file.read()
             file.close()
             self.settings = json.loads(text)
         except:
             print("Couldn't find settings.json")
             self.settings = dict()
+            raise
 
     def isSkinnedMeshesExperimental(self) -> bool:
         if "skinnedMeshesExperimental" in self.settings.keys():
