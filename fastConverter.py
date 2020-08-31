@@ -5,12 +5,15 @@ from spJsonReader import spJsonReader
 from spBinaryWriter import spBinaryWriter
 from spJsonWriter import spJsonWriter
 from settings import SpineConverterSettings
-import scriptUtils
+from dragonBonesFixer import DragonBonesFixer
 import re
 import traceback
 
+
 settings = SpineConverterSettings()
 args = sys.argv[1:]
+dragonBonesFixer = DragonBonesFixer(settings)
+
 
 for arg in args:
     try:
@@ -24,45 +27,18 @@ for arg in args:
 
                 skeletonData = binaryReader.readSkeletonDataFile(fileName)
 
-                if settings.isFixMeshes():
-                    scriptUtils.fixMeshes(skeletonData, fileName)
-
                 jsonWriter.writeSkeletonDataFile(skeletonData, fileName.replace(".skel", ".json"))
+
+                dragonBonesFixer.fixSpineConverterJson(fileName.replace(".skel", ".json"))
             elif (fileName.endswith(".json")):
                 print("Converting " + fileName.split("\\")[-1] + " into .skel.")
 
                 jsonReader = spJsonReader()
                 binaryWriter = spBinaryWriter()
 
-                skeletonData = jsonReader.readSkeletonDataFile(fileName, settings)
+                fileName = dragonBonesFixer.fixDragonBonesJson(fileName)
 
-                if settings.isAutoRenameOn(): # DragonBones
-                    try:
-                        extensions = [".json", ".png", ".atlas"]
-                        oldName =  os.path.basename(fileName)[:-5]
-                        newName = re.sub('_\d*$', '', oldName)
-                        if oldName.find(".sprite.") == -1:
-                            newName = newName.replace("sprite", ".sprite.")
-                        folderPath = os.path.dirname(fileName)
-                        fileName = folderPath + os.path.sep + newName + ".json"
-                        for foundName in os.listdir(folderPath):
-                            foundFileName, foundFileExtension = os.path.splitext(foundName)
-                            if foundFileName == oldName and foundFileExtension in extensions:
-                                if foundFileExtension == ".atlas":
-                                    file = open(folderPath + os.path.sep + foundName, "r+")
-                                    text = file.read()
-                                    text = text.replace(oldName, newName)
-                                    file.seek(0)
-                                    file.write(text)
-                                    file.truncate()
-                                    file.close()
-                                os.rename(folderPath + os.path.sep + foundName, folderPath + os.path.sep + newName + foundFileExtension)
-                    except Exception:
-                        print("Error while trying to rename file, consider turning it of in settings.json")
-                        raise
-
-                if (settings.isAddEmptyAnimationsOn()): # DragonBones
-                    scriptUtils.addEmptyAnimations(skeletonData, fileName)
+                skeletonData = jsonReader.readSkeletonDataFile(fileName)
 
                 binaryWriter.writeSkeletonDataFile(skeletonData, fileName.replace(".json", ".skel"))
             else:

@@ -399,17 +399,6 @@ class spJsonWriter():
             color = self.getColorString( mesh )
             if ( color != "ffffffff" ):
                 jsonAttachment[placeholderName]["color"] = color
-            # DragonBones start
-            if "edges" in mesh.keys():
-                if ( len( mesh["edges"] ) > 0 ):
-                    jsonAttachment[placeholderName]["edges"] = mesh["edges"]
-            if "width" in mesh.keys():
-                if ( mesh["width"] > 0 ):
-                    jsonAttachment[placeholderName]["width"] = mesh["width"]
-            if "height" in mesh.keys():
-                if ( mesh["height"] > 0 ):
-                    jsonAttachment[placeholderName]["height"] = mesh["height"]
-            # DragonBones end
 
         elif ( attachment["attachmentType"] == SP_ATTACHMENT_SKINNED_MESH ):
 
@@ -463,16 +452,12 @@ class spJsonWriter():
         jsonData = { "skeleton": {} }
 
         jsonData["skeleton"]["hash"] = skeletonData["hash"]
-        if skeletonData["version"] == None:
-            jsonData["skeleton"]["spine"] = "2.1.27"
-        else:
-            jsonData["skeleton"]["spine"] = skeletonData["version"]
+        jsonData["skeleton"]["spine"] = skeletonData["version"]
         jsonData["skeleton"]["width"] = skeletonData["width"]
         jsonData["skeleton"]["height"] = skeletonData["height"]
 
         if ( skeletonData["nonessential"] ):
             jsonData["skeleton"]["images"] = skeletonData["images"]
-            
 
         # Bones
         jsonData["bones"] = list()

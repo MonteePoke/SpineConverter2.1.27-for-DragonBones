@@ -13,7 +13,6 @@ class SpineConverterSettings:
         except:
             print("Couldn't find settings.json")
             self.settings = dict()
-            raise
 
     def isSkinnedMeshesExperimental(self) -> bool:
         if "skinnedMeshesExperimental" in self.settings.keys():
