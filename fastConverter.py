@@ -9,11 +9,9 @@ from dragonBonesFixer import DragonBonesFixer
 import re
 import traceback
 
-
 settings = SpineConverterSettings()
 args = sys.argv[1:]
 dragonBonesFixer = DragonBonesFixer(settings)
-
 
 for arg in args:
     try:

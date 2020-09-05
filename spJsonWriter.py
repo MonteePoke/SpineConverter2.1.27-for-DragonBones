@@ -459,6 +459,7 @@ class spJsonWriter():
         if ( skeletonData["nonessential"] ):
             jsonData["skeleton"]["images"] = skeletonData["images"]
 
+
         # Bones
         jsonData["bones"] = list()
 

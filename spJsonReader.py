@@ -418,7 +418,7 @@ class spJsonReader():
         return d
 
 
-    def readSkeletonDataFile( self, path):
+    def readSkeletonDataFile( self, path ):
 
         file = open( path, 'r' )
         text = file.read()

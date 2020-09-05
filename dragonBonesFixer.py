@@ -8,6 +8,7 @@ class DragonBonesFixer:
     def __init__(self, settings):
         self.settings = settings
 
+    # fixes .json file from DragonBones editor
     def fixDragonBonesJson(self, fileName):
         file = open(fileName, 'r')
         jsonData = json.loads(file.read())
@@ -45,6 +46,7 @@ class DragonBonesFixer:
 
         return fileName
 
+    # fixes .skel file from Spine editor
     def fixSpineConverterJson(self, fileName):
         file = open(fileName, 'r+')
         text = file.read()
@@ -58,11 +60,16 @@ class DragonBonesFixer:
         file.write( json.dumps(jsonData) )
         file.close()
 
+    # renames deform to ffd
+    # looks like later Spine versions contain deform, not ffd
     def replaceDeformToFFD(self, jsonData):
         for animation in jsonData["animations"].items():
             if "deform" in animation[1]:
                 animation[1]["ffd"] = animation[1].pop("deform")
 
+    # changes mesh type to skinned mesh
+    # DragonBones doesn't distinguish mesh and skinnedmesh
+    # A mesh is skinned (weighted for later version?) if the number of vertices > number of UV
     def detectSkinnedMeshes(self, jsonData):
         if "skins" in jsonData:
             if "default" in jsonData["skins"]:
@@ -76,6 +83,12 @@ class DragonBonesFixer:
                             if verticesCount > uvsCount:
                                 skin["type"] = "skinnedmesh"
 
+    # DragonBones only include skin color if it != FFFFFFFF (opaque)
+    # Because of that animations only contain information on what to make transparent
+    # Example why that's no good:
+    # Abomination enters combat -> beast becomes transparent
+    # You activate transformation -> human becomes transparent
+    # But human does not appear, because animation doesn't know it should make human visible
     def fixSeveralAnimations(self, jsonData):
         slotsArray = dict()
         for i in jsonData["animations"].keys():
@@ -91,6 +104,8 @@ class DragonBonesFixer:
                         jsonData["animations"][i]["slots"][j] = slotsArray[j]
             k = k + 1
 
+    # Adds commas around word "sprite" in json, png and atlas file names
+    # Because DB doesn't support commas in project name
     def rename(self, fileName):
         try:
             extensions = [".json", ".png", ".atlas"]
@@ -118,6 +133,9 @@ class DragonBonesFixer:
             raise
         return fileName
 
+    # DragonBones doesn't include empty animations
+    # (no translation, rotation, scaling, changing color)
+    # adds animation based on fileName if the animation is missing
     def addEmptyAnimations(self, jsonData, fileName):
         type = re.search("sprite\.?(.*).json", fileName).group(1)
         types = [type]
@@ -128,7 +146,9 @@ class DragonBonesFixer:
             if j not in jsonData["animations"].keys():
                 jsonData["animations"][j] = {};
 
-
+    # Game's skel files doesn't contain edges, width and height information for meshes
+    # Width and height can be retrieved from atlas file
+    # Edges can easily be generated from hull size
     def fixMeshes(self, jsonData, fileName):
         try:
             atlas = readAtlasFile(fileName.replace(".json", ".atlas"))
@@ -159,64 +179,11 @@ class DragonBonesFixer:
                     for i in range (0, len(skin["edges"])):
                         skin["edges"][i] = skin["edges"][i]*2
 
+    # Shear isn't supported in original SpineConverter  (and Spine 2.1.27 too?)
+    # So we just delete it, otherwise rotation breaks
     def removeShear(self, jsonData):
         for animation in jsonData["animations"].items():
             if "bones" in animation[1].keys():
                 for bone in animation[1]["bones"].items():
                     if "shear" in bone[1].keys():
                         bone[1].pop("shear")
-
-# def _areNeighbors_(a, b, size) -> bool:
-#     return abs(a - b) == 1 or abs(a - b) == size - 1
-    # types = [
-    #     {"name": "afflicted",
-    #      "animations": ["afflicted"]},
-    #     {"name": "camp",
-    #      "animations": ["camp"]},
-    #     {"name": "combat",
-    #      "animations": ["combat"]},
-    #     {"name": "defend",
-    #      "animations": ["death", "defend"]},
-    #     {"name": "heroic",
-    #      "animations": ["heroic"]},
-    #     {"name": "idle",
-    #      "animations": ["idle"]},
-    #     {"name": "investigate",
-    #      "animations": ["investigate"]},
-    #     {"name": "walk",
-    #      "animations": ["walk"]}
-    # ]
-
-    ### Useless code ###
-    # triangleCount = len(attachment["triangles"])
-    # pairs = set()
-    # for triangle in range(0, triangleCount, 3):
-    #     vertex1 = attachment["triangles"][triangle]
-    #     vertex2 = attachment["triangles"][triangle + 1]
-    #     vertex3 = attachment["triangles"][triangle + 2]
-    #     if not _areNeighbors_(vertex1, vertex2, verticesCount):
-    #         pairs.add((vertex1*2, vertex2*2))
-    #     if not _areNeighbors_(vertex2, vertex3, verticesCount):
-    #         pairs.add((vertex2*2, vertex3*2))
-    #     if not _areNeighbors_(vertex1, vertex3, verticesCount):
-    #         pairs.add((vertex1*2, vertex3*2))
-    # if attachment["placeholderName"] == "feather03":
-    #     print("ya")
-    # # remove reverse duplicate pairs
-    # pairs = {tuple(sorted(item)) for item in pairs}
-    # # sort set of tuples
-    # pairs = sorted(pairs, key=lambda tup: (tup[0], tup[1]))
-    # # set of tuples to list
-    # attachment["edges"] = [item for t in pairs for item in t]
-
-# DragonBones start
-# if "edges" in mesh.keys():
-#     if ( len( mesh["edges"] ) > 0 ):
-#         jsonAttachment[placeholderName]["edges"] = mesh["edges"]
-# if "width" in mesh.keys():
-#     if ( mesh["width"] > 0 ):
-#         jsonAttachment[placeholderName]["width"] = mesh["width"]
-# if "height" in mesh.keys():
-#     if ( mesh["height"] > 0 ):
-#         jsonAttachment[placeholderName]["height"] = mesh["height"]
-# DragonBones end
