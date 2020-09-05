@@ -1,8 +1,6 @@
 
 from spUtils import *
-from settings import SpineConverterSettings
 import json
-import copy
 
 class spJsonReader():
 
@@ -105,9 +103,7 @@ class spJsonReader():
                     timelineType = SP_TIMELINE_FLIPX
                 elif ( timelineKeyList[j] == "flipY" ):
                     timelineType = SP_TIMELINE_FLIPY
-                else:
-                    continue
-                    # DragonBones Added else and continue to fight "shear"
+
                 frames = bone[ timelineKeyList[j] ]
                 timelineDict = { "type": timelineType, "framesCount": list( frames ), "frames": list() }
 
@@ -220,7 +216,7 @@ class spJsonReader():
 
 
         # FFD (Skin Deform) timelines
-        ffd = jsonAnimation.get( "deform", dict() ) # DragonBones changed ffd to deform
+        ffd = jsonAnimation.get( "ffd", dict() )
         skinsKeyList = list( ffd.keys() )
         for i in range( 0, len( skinsKeyList ) ):
 
@@ -324,14 +320,6 @@ class spJsonReader():
 
         attachment["attachmentType"] = getAttachmentTypeFromJsonToBinary( jsonAttachment.get( "type", None ) )
 
-        #DragonBones skinnedMesh
-        if (self.settings.isSkinnedMeshesExperimental()):
-            if (attachment["attachmentType"] == SP_ATTACHMENT_MESH):
-                uvsCount = len(jsonAttachment["uvs"])
-                verticesCount = len(jsonAttachment["vertices"])
-                if verticesCount > uvsCount:
-                    attachment["attachmentType"] = SP_ATTACHMENT_SKINNED_MESH
-
         if ( attachment["attachmentType"] == SP_ATTACHMENT_REGION ):
 
             attachment["path"] = jsonAttachment.get( "path", None )
@@ -430,33 +418,12 @@ class spJsonReader():
         return d
 
 
-    def readSkeletonDataFile( self, path, settings):
-        self.settings = settings
+    def readSkeletonDataFile( self, path ):
 
         file = open( path, 'r' )
         text = file.read()
         file.close()
         jsonData = json.loads( text, object_pairs_hook=self.renameDuplicateKeysInJson )
-
-        # DragonBones start prevents character from going invisible
-        if (settings.hasSeveralAnimations()):
-            if "animations" in jsonData.keys():
-                slotArrays = dict()
-                for i in  jsonData["animations"].keys():
-                    if "slots" in jsonData["animations"][i].keys():
-                        for j in jsonData["animations"][i]["slots"]:
-                            if j not in slotArrays.keys():
-                                slotArrays[j]= {"color":[{"color":"FFFFFFFF","time":0}]}
-                k = 0
-                for i in jsonData["animations"].keys():
-                    for j in slotArrays.keys():
-                        if "slots" in jsonData["animations"][i].keys():
-                            if j not in jsonData["animations"][i]["slots"].keys():
-                                jsonData["animations"][i]["slots"][j] = slotArrays[j]
-                    k = k + 1
-            else:
-                jsonData["animations"] = dict()
-        # DragonBones end
 
         skeletonData = spStoredSkeletonData()
 
