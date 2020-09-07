@@ -51,10 +51,11 @@ class spBinaryWriter():
         if ( text == None ):
             self.writeVarInt( 0 )
         else:
+            utf8Text = text.encode("utf-8")
             length = len( text )
             self.writeVarInt( length + 1 ) # for '\0' which .skel files don't have anyway...
-            for i in range( 0, length ):
-                self.writeByte( ord( text[i] ) )
+            for i in utf8Text:
+                self.writeByte( i )
 
     def writeColor( self, dictWithColor ):
         self.writeByte( int( dictWithColor["r"] * 255 ) )
@@ -411,7 +412,7 @@ class spBinaryWriter():
         if ( len( skeletonData["slots"] ) > 0 ):
             
             for i in range( 0, len( skeletonData["slots"] ) ):
-                
+
                 self.writeString( skeletonData["slots"][i]["name"] )
                 self.writeVarInt( skeletonData["slots"][i]["boneData"] )
                 self.writeColor( skeletonData["slots"][i] )

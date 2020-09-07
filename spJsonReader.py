@@ -420,7 +420,7 @@ class spJsonReader():
 
     def readSkeletonDataFile( self, path ):
 
-        file = open( path, 'r' )
+        file = open( path, 'r', encoding='utf-8')
         text = file.read()
         file.close()
         jsonData = json.loads( text, object_pairs_hook=self.renameDuplicateKeysInJson )

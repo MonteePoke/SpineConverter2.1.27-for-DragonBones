@@ -609,14 +609,14 @@ class spJsonWriter():
         cleanupUselessFloats( jsonData )
 
         if ( pretty ):
-            text = json.dumps( jsonData, sort_keys=False, indent=2, separators=( ",", ": " ) )
+            text = json.dumps( jsonData, ensure_ascii=False, sort_keys=False, indent=2, separators=( ",", ": " ) )
         else:
-            text = json.dumps( jsonData, sort_keys=False )
+            text = json.dumps( jsonData, ensure_ascii=False, sort_keys=False )
 
         # remove "_another_key_with_the_same_name_#" from keys
         for i in range( 0, 20 ):
             text = text.replace( "_another_key_with_the_same_name_" + str( i ), "" )
         
-        file = open( path, 'w' )
+        file = open( path, 'w', encoding='utf-8')
         file.write( text )
         file.close()

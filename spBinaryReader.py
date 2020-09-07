@@ -22,7 +22,18 @@ class spBinaryReader():
         return b
 
     def readChar( self ):
-        return chr( self.readByte() )
+        char = [self.readByte()]
+        bitsString = '{0:08b}'.format(char[0])
+        startingBits = ['0', '110', '1110', '11110']
+        bytesCount = 0;
+        for start in startingBits:
+            if bitsString.startswith(start):
+                bytesCount = startingBits.index(start) + 1
+                break
+        utf8char = char
+        for i in range(0, bytesCount - 1):
+            utf8char.append(self.readByte())
+        return bytes(utf8char).decode("utf-8")
 
     def readBoolean( self ):
         value = self.readByte() != 0

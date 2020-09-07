@@ -10,12 +10,12 @@ class DragonBonesFixer:
 
     # fixes .json file from DragonBones editor
     def fixDragonBonesJson(self, fileName):
-        file = open(fileName, 'r')
+        file = open(fileName, 'r', encoding='utf-8')
         jsonData = json.loads(file.read())
         file.close()
 
-        file = open(fileName.replace(".json", "_db.json"), 'w')
-        file.write( json.dumps(jsonData) )
+        file = open(fileName.replace(".json", "_db.json"), 'w', encoding='utf-8')
+        file.write( json.dumps(jsonData, ensure_ascii=False) )
         file.close()
 
         # adds spine version
@@ -40,15 +40,15 @@ class DragonBonesFixer:
 
         self.replaceDeformToFFD(jsonData)
 
-        file = open( fileName, 'w' )
-        file.write( json.dumps(jsonData) )
+        file = open(fileName, 'w', encoding='utf-8')
+        file.write( json.dumps(jsonData, ensure_ascii=False) )
         file.close()
 
         return fileName
 
     # fixes .skel file from Spine editor
     def fixSpineConverterJson(self, fileName):
-        file = open(fileName, 'r+')
+        file = open(fileName, 'r+',  encoding='utf-8' )
         text = file.read()
         jsonData = json.loads(text)
         file.close()
@@ -56,8 +56,8 @@ class DragonBonesFixer:
         if self.settings.isFixMeshes():
             self.fixMeshes(jsonData, fileName)
 
-        file = open( fileName, 'w' )
-        file.write( json.dumps(jsonData) )
+        file = open( fileName, 'w', encoding='utf-8' )
+        file.write( json.dumps(jsonData, ensure_ascii=False) )
         file.close()
 
     # renames deform to ffd
@@ -150,34 +150,34 @@ class DragonBonesFixer:
     # Width and height can be retrieved from atlas file
     # Edges can easily be generated from hull size
     def fixMeshes(self, jsonData, fileName):
+        atlas = None
         try:
             atlas = readAtlasFile(fileName.replace(".json", ".atlas"))
+        except:
+            print("Coulnd't find assosiated .atlas file, meshes were not fixed")
+        if atlas != None:
             for i in range(0, len(atlas)):
                 if "regionSections" in atlas[i].keys():
                     atlasSections = atlas[i]["regionSections"]
-        except:
-            print("Coulnd't find assosiated .atlas file")
-            raise
+            for skinName in jsonData["skins"]["default"]:
+                skinSubName =  next(iter(jsonData["skins"]["default"][skinName]))
+                skin = jsonData["skins"]["default"][skinName][skinSubName]
+                if "type" in skin:
+                    if skin["type"] in ["skinnedmesh", "mesh"]:
+                        verticesCount = skin["hull"]
 
-        for skinName in jsonData["skins"]["default"]:
-            skinSubName =  next(iter(jsonData["skins"]["default"][skinName]))
-            skin = jsonData["skins"]["default"][skinName][skinSubName]
-            if "type" in skin:
-                if skin["type"] in ["skinnedmesh", "mesh"]:
-                    verticesCount = skin["hull"]
+                        atlasRegion = next(item for item in atlasSections if item["name"] == skinName)
+                        skin["width"] = atlasRegion["width"]
+                        skin["height"] = atlasRegion["height"]
 
-                    atlasRegion = next(item for item in atlasSections if item["name"] == skinName)
-                    skin["width"] = atlasRegion["width"]
-                    skin["height"] = atlasRegion["height"]
-
-                    skin["edges"] = list()
-                    skin["edges"].append(0)
-                    skin["edges"].append(verticesCount - 1)
-                    for i in range (0, verticesCount - 1):
-                        skin["edges"].append(i)
-                        skin["edges"].append(i+1)
-                    for i in range (0, len(skin["edges"])):
-                        skin["edges"][i] = skin["edges"][i]*2
+                        skin["edges"] = list()
+                        skin["edges"].append(0)
+                        skin["edges"].append(verticesCount - 1)
+                        for i in range (0, verticesCount - 1):
+                            skin["edges"].append(i)
+                            skin["edges"].append(i+1)
+                        for i in range (0, len(skin["edges"])):
+                            skin["edges"][i] = skin["edges"][i]*2
 
     # Shear isn't supported in original SpineConverter  (and Spine 2.1.27 too?)
     # So we just delete it, otherwise rotation breaks
@@ -187,3 +187,17 @@ class DragonBonesFixer:
                 for bone in animation[1]["bones"].items():
                     if "shear" in bone[1].keys():
                         bone[1].pop("shear")
+
+    # utf 8 reading
+    # char = self.readByte()
+    # bitsString = '{0:08b}'.format(char)
+    # startingBits = ['0', '110', '1110', '11110']
+    # bytesCount = 0;
+    # for start in startingBits:
+    #     if bitsString.startswith(start):
+    #         bytesCount = startingBits.index(start) + 1
+    #         break
+    # utf8char = char
+    # for i in range(0, bytesCount - 1):
+    #     utf8char = utf8char * 256 + self.readByte()
+    # return chr(utf8char)
