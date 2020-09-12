@@ -13,37 +13,44 @@ settings = SpineConverterSettings()
 args = sys.argv[1:]
 dragonBonesFixer = DragonBonesFixer(settings)
 
+if len(args) == 0:
+    args = [settings.getFilePath()]
+    if args[0] == "" or not os.path.isfile(args[0]):
+        print("File path empty or file doesn't exist\n"+
+              "Edit \"filepath\" line in settings.json to choose a file\n"+
+              "To copy file path:\n"+
+              "Windows: right click on file while holding shift, press \"Copy as File\""+
+              "Mac: while in right click menu holw down Option key, press \"Copy X as Pathname\"")
+        input("Press enter to close")
+        args = []
+
 for arg in args:
     try:
-        if (len(sys.argv) >= 2):
-            fileName = arg
-            if (fileName.endswith(".skel")):
-                print("Converting " + fileName.split("\\")[-1] + " into .json.")
+        fileName = arg
+        if (fileName.endswith(".skel")):
+            print("Converting " + fileName.split("\\")[-1] + " into .json.")
 
-                binaryReader = spBinaryReader()
-                jsonWriter = spJsonWriter()
+            binaryReader = spBinaryReader()
+            jsonWriter = spJsonWriter()
 
-                skeletonData = binaryReader.readSkeletonDataFile(fileName)
+            skeletonData = binaryReader.readSkeletonDataFile(fileName)
 
-                jsonWriter.writeSkeletonDataFile(skeletonData, fileName.replace(".skel", ".json"))
+            jsonWriter.writeSkeletonDataFile(skeletonData, fileName.replace(".skel", ".json"))
 
-                dragonBonesFixer.fixSpineConverterJson(fileName.replace(".skel", ".json"))
-            elif (fileName.endswith(".json")):
-                print("Converting " + fileName.split("\\")[-1] + " into .skel.")
+            dragonBonesFixer.fixSpineConverterJson(fileName.replace(".skel", ".json"))
+        elif (fileName.endswith(".json")):
+            print("Converting " + fileName.split("\\")[-1] + " into .skel.")
 
-                jsonReader = spJsonReader()
-                binaryWriter = spBinaryWriter()
+            jsonReader = spJsonReader()
+            binaryWriter = spBinaryWriter()
 
-                fileName = dragonBonesFixer.fixDragonBonesJson(fileName)
+            fileName = dragonBonesFixer.fixDragonBonesJson(fileName)
 
-                skeletonData = jsonReader.readSkeletonDataFile(fileName)
+            skeletonData = jsonReader.readSkeletonDataFile(fileName)
 
-                binaryWriter.writeSkeletonDataFile(skeletonData, fileName.replace(".json", ".skel"))
-            else:
-                print("Invalid file type.")
-                input("Press enter to close")
+            binaryWriter.writeSkeletonDataFile(skeletonData, fileName.replace(".json", ".skel"))
         else:
-            print("Required arguments not found")
+            print("Invalid file type.")
             input("Press enter to close")
     except Exception:
         traceback.print_exc()

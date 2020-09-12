@@ -8,8 +8,10 @@ class SpineConverterSettings:
             path = os.path.join(os.path.dirname(os.path.realpath(sys.argv[0])), 'settings.json')
             file = open(path, 'r')
             text = file.read()
+            text = text.replace("\\", "/")
             file.close()
-            self.settings = json.loads(text)
+            jsonData = json.loads(text)
+            self.settings = jsonData
         except:
             print("Couldn't find settings.json")
             self.settings = dict()
@@ -39,3 +41,8 @@ class SpineConverterSettings:
         if "fixMeshes" in self.settings.keys():
             return self.settings["fixMeshes"]
         return True
+
+    def getFilePath(self) -> bool:
+        if "filePath" in self.settings.keys():
+            return self.settings["filePath"]
+        return ""

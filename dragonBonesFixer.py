@@ -14,6 +14,8 @@ class DragonBonesFixer:
         jsonData = json.loads(file.read())
         file.close()
 
+        hash1 = hash(json.dumps(jsonData, sort_keys=True))
+
         file = open(fileName.replace(".json", "_db.json"), 'w')
         file.write( json.dumps(jsonData) )
         file.close()
@@ -40,9 +42,12 @@ class DragonBonesFixer:
 
         self.replaceDeformToFFD(jsonData)
 
-        file = open( fileName, 'w' )
-        file.write( json.dumps(jsonData) )
-        file.close()
+        hash2 = hash(json.dumps(jsonData, sort_keys=True))
+
+        if hash1 != hash2:
+            file = open( fileName, 'w' )
+            file.write( json.dumps(jsonData) )
+            file.close()
 
         return fileName
 
@@ -166,7 +171,7 @@ class DragonBonesFixer:
                 if skin["type"] in ["skinnedmesh", "mesh"]:
                     verticesCount = skin["hull"]
 
-                    atlasRegion = next(item for item in atlasSections if item["name"] == skinName)
+                    atlasRegion = next(item for item in atlasSections if item["name"] == skinSubName)
                     skin["width"] = atlasRegion["width"]
                     skin["height"] = atlasRegion["height"]
 

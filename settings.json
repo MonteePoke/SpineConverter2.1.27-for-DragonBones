@@ -3,5 +3,6 @@
 	"severalAnimations" : true,
 	"autoRename" : true,
 	"addEmptyAnimations" : true,
-	"fixMeshes" : true
+	"fixMeshes" : true,
+	"filePath": ""
 }
