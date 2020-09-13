@@ -18,6 +18,9 @@ for arg in args:
         for skinName in jsonData["skins"]["default"]:
             skinSubName = next(iter(jsonData["skins"]["default"][skinName]))
             skin = jsonData["skins"]["default"][skinName][skinSubName]
+            # if "type" in skin:
+            #     if skin["type"] == "skinnedmesh":
+            #         continue
             if "scaleX" in skin.keys():
                 skin["scaleX"] = skin["scaleX"] * -1
             else:
@@ -38,6 +41,26 @@ for arg in args:
 
             if "y" in skin.keys():
                 skin["y"] = skin["y"] * -1
+
+            if "type" in skin:
+                if skin["type"] == "skinnedmesh":
+                    vertices = skin["vertices"]
+                    i = 0
+                    length = len(vertices)
+                    while i < length:
+                        boneCount = vertices[i]
+                        i = i + 2
+                        for j in range(0, boneCount):
+                            # vertices[i] = vertices[i]*-1
+                            vertices[i+1] = vertices[i+1]*-1
+                            i = i + 4
+                        i -= 1
+                # if skin["type"] == "mesh":
+                #     vertices = skin["vertices"]
+                #     for i in range(0, len(vertices), 2):
+                #         # vertices[i] = vertices[i]*-1
+                #         vertices[i + 1] = vertices[i + 1] * -1
+
 
         for bone in jsonData["bones"]:
             if bone["name"] == "root":
