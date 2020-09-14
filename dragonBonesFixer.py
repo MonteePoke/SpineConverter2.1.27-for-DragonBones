@@ -142,7 +142,12 @@ class DragonBonesFixer:
     # (no translation, rotation, scaling, changing color)
     # adds animation based on fileName if the animation is missing
     def addEmptyAnimations(self, jsonData, fileName):
-        type = re.search("sprite\.?(.*).json", fileName).group(1)
+        searchResult = re.search("sprite\.?(.*).json", fileName)
+        if searchResult == None:
+            print("File is poorly named, name should look like \"%className%.sprite.%animationName%\"")
+            return
+
+        type = searchResult.group(1)
         types = [type]
         if type == "defend":
             types.append("death")
