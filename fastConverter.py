@@ -19,8 +19,8 @@ if len(args) == 0:
         print("File path empty or file doesn't exist\n"+
               "Edit \"filepath\" line in settings.json to choose a file\n"+
               "To copy file path:\n"+
-              "Windows: right click on file while holding shift, press \"Copy as File\""+
-              "Mac: while in right click menu holw down Option key, press \"Copy X as Pathname\"")
+              "Windows: right click on file while holding shift, press \"Copy as File\"\n"+
+              "Mac: while in right click menu hold down Option key, press \"Copy X as Pathname\"")
         input("Press enter to close")
         args = []
 
