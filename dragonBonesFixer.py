@@ -179,6 +179,7 @@ class DragonBonesFixer:
                     atlasNameToFind = skinSubName
                     if "path" in skin:
                         atlasNameToFind = skin["path"]
+                    print("Same skin is used for 2+ slots, use Replace Image button in DragonBones")
 
                     atlasRegion = next(item for item in atlasSections if item["name"] == atlasNameToFind)
                     skin["width"] = atlasRegion["width"]
