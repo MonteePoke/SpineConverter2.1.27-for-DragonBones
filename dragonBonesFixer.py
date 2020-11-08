@@ -176,7 +176,11 @@ class DragonBonesFixer:
                 if skin["type"] in ["skinnedmesh", "mesh"]:
                     verticesCount = skin["hull"]
 
-                    atlasRegion = next(item for item in atlasSections if item["name"] == skinSubName)
+                    atlasNameToFind = skinSubName
+                    if "path" in skin:
+                        atlasNameToFind = skin["path"]
+
+                    atlasRegion = next(item for item in atlasSections if item["name"] == atlasNameToFind)
                     skin["width"] = atlasRegion["width"]
                     skin["height"] = atlasRegion["height"]
 
