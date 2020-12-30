@@ -37,6 +37,8 @@ class spBinaryWriter():
             self.writeFloat( values[i] )
 
     def writeVarInt( self, value ):
+        if value < 0:
+            raise ValueError("Something non-negative is negative")
         byteArray = bytearray()
         while ( True ):
             byte = value & 0x7f

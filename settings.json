@@ -1,7 +1,7 @@
 {
 	"skinnedMeshesExperimental" : true,
 	"severalAnimations" : true,
-	"autoRename" : true,
+	"autoRename" : false,
 	"addEmptyAnimations" : true,
 	"fixMeshes" : true,
 	"filePath": ""
