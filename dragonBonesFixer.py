@@ -118,6 +118,8 @@ class DragonBonesFixer:
             newName = re.sub('_\d*$', '', oldName)
             if oldName.find(".sprite.") == -1:
                 newName = newName.replace("sprite", ".sprite.")
+                if newName.startswith(".sprite."):
+                    newName = "class" + newName
             folderPath = os.path.dirname(fileName)
             fileName = folderPath + os.path.sep + newName + ".json"
             for foundName in os.listdir(folderPath):
