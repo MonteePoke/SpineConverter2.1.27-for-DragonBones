@@ -17,10 +17,10 @@ class DragonBonesFixer:
         file.close()
 
         hash1 = hash(json.dumps(jsonData, sort_keys=True))
-
-        file = open(fileName.replace(".json", "_db.json"), 'w')
-        file.write( json.dumps(jsonData) )
-        file.close()
+        if self.settings.isPreserveDBJson():
+            file = open(fileName.replace(".json", "_db.json"), 'w')
+            file.write( json.dumps(jsonData) )
+            file.close()
 
         # adds spine version
         jsonData["skeleton"]["spine"] = "2.1.27"
