@@ -6,6 +6,7 @@ from spBinaryWriter import spBinaryWriter
 from spJsonWriter import spJsonWriter
 from settings import SpineConverterSettings
 from dragonBonesFixer import DragonBonesFixer
+import json
 import re
 import traceback
 
@@ -34,6 +35,14 @@ for arg in args:
             jsonWriter = spJsonWriter()
 
             skeletonData = binaryReader.readSkeletonDataFile(fileName)
+
+            if (settings.isDumpSkelData()):
+                text = json.dumps(skeletonData, sort_keys=False, indent=2, separators=(",", ": "))
+                file = open('skelData.json', 'w')
+                file.write(text)
+                file.close()
+
+            skeletonData = dragonBonesFixer.fixSkeletonDataFromSkel(skeletonData, fileName)
 
             jsonWriter.writeSkeletonDataFile(skeletonData, fileName.replace(".skel", ".json"))
 

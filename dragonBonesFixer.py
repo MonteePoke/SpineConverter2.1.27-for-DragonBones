@@ -1,5 +1,5 @@
 import re
-import spUtils
+import copy
 import json
 import os
 from spAtlas import *
@@ -168,7 +168,7 @@ class DragonBonesFixer:
                 if "regionSections" in atlas[i].keys():
                     atlasSections = atlas[i]["regionSections"]
         except:
-            print("Coulnd't find assosiated .atlas file")
+            print("Couldn't find associated .atlas file")
             raise
 
         for skinName in jsonData["skins"]["default"]:
@@ -181,7 +181,6 @@ class DragonBonesFixer:
                     atlasNameToFind = skinSubName
                     if "path" in skin:
                         atlasNameToFind = skin["path"]
-                    print("Same skin is used for 2+ slots, use Replace Image button in DragonBones")
 
                     atlasRegion = next(item for item in atlasSections if item["name"] == atlasNameToFind)
                     skin["width"] = atlasRegion["width"]
@@ -204,3 +203,29 @@ class DragonBonesFixer:
                 for bone in animation[1]["bones"].items():
                     if "shear" in bone[1].keys():
                         bone[1].pop("shear")
+
+    # Fix scaling for
+    def fixSkeletonDataFromSkel(self, skeletonData, fileName):
+        if not self.settings.isAutoRenameOn():
+            return
+
+        try:
+            atlas = readAtlasFile(fileName.replace(".skel", ".atlas"))
+            for i in range(0, len(atlas)):
+                if "regionSections" in atlas[i].keys():
+                    atlasSections = atlas[i]["regionSections"]
+        except:
+            print("Couldn't find associated .atlas file")
+            return
+
+        skeletonDataCopy = copy.deepcopy(skeletonData)
+        try:
+            for slot in skeletonDataCopy["skins"][0]["slots"]:
+                for attachment in slot["attachments"]:
+                    atlasRegion = next(item for item in atlasSections if item["name"] == attachment["placeholderName"])
+                    attachment["scaleX"] = attachment["width"]/atlasRegion["width"]
+                    attachment["scaleY"] = attachment["height"]/atlasRegion["height"]
+            return skeletonDataCopy
+        except:
+            print("Failed to fix skeleton data from .skel")
+

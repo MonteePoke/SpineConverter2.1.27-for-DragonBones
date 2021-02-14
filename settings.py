@@ -42,6 +42,21 @@ class SpineConverterSettings:
             return self.settings["fixMeshes"]
         return True
 
+    def isDumpSkelData(self) -> bool:
+        if "dumpSkelData" in self.settings.keys():
+            return self.settings["dumpSkelData"]
+        return False
+
+    def isPreserveDBJson(self) -> bool:
+        if "preserveDBJson" in self.settings.keys():
+            return self.settings["preserveDBJson"]
+        return False
+
+    def isFixDataFromSkel(self) -> bool:
+        if "fixDataFromSkel" in self.settings.keys():
+            return self.settings["fixDataFromSkel"]
+        return True
+
     def getFilePath(self) -> bool:
         if "filePath" in self.settings.keys():
             return self.settings["filePath"]
