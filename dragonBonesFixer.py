@@ -2,6 +2,8 @@ import re
 import copy
 import json
 import os
+import traceback
+
 from spAtlas import *
 
 class DragonBonesFixer:
@@ -174,13 +176,16 @@ class DragonBonesFixer:
         for skinName in jsonData["skins"]["default"]:
             skinSubName =  next(iter(jsonData["skins"]["default"][skinName]))
             skin = jsonData["skins"]["default"][skinName][skinSubName]
+            if "path" in skin:
+                jsonData["skins"]["default"][skinName][skin["path"]] = jsonData["skins"]["default"][skinName].pop(skinSubName)
+                skinSubName = skin["path"]
+                skin = jsonData["skins"]["default"][skinName][skinSubName]
+
             if "type" in skin:
                 if skin["type"] in ["skinnedmesh", "mesh"]:
                     verticesCount = skin["hull"]
 
                     atlasNameToFind = skinSubName
-                    if "path" in skin:
-                        atlasNameToFind = skin["path"]
 
                     atlasRegion = next(item for item in atlasSections if item["name"] == atlasNameToFind)
                     skin["width"] = atlasRegion["width"]
@@ -206,8 +211,8 @@ class DragonBonesFixer:
 
     # Fix scaling for
     def fixSkeletonDataFromSkel(self, skeletonData, fileName):
-        if not self.settings.isAutoRenameOn():
-            return
+        if not self.settings.isFixDataFromSkel():
+            return skeletonData
 
         try:
             atlas = readAtlasFile(fileName.replace(".skel", ".atlas"))
@@ -216,16 +221,26 @@ class DragonBonesFixer:
                     atlasSections = atlas[i]["regionSections"]
         except:
             print("Couldn't find associated .atlas file")
-            return
+            return skeletonData
 
         skeletonDataCopy = copy.deepcopy(skeletonData)
         try:
             for slot in skeletonDataCopy["skins"][0]["slots"]:
                 for attachment in slot["attachments"]:
-                    atlasRegion = next(item for item in atlasSections if item["name"] == attachment["placeholderName"])
-                    attachment["scaleX"] = attachment["width"]/atlasRegion["width"]
-                    attachment["scaleY"] = attachment["height"]/atlasRegion["height"]
+                    atlasRegion = None
+                    if "path" in attachment and attachment["path"] is not None:
+                        atlasRegion = next(item for item in atlasSections if item["name"] == attachment["path"])
+                    else:
+                        atlasRegion = next(item for item in atlasSections if item["name"] == attachment["placeholderName"])
+                    if atlasRegion is None:
+                        continue
+                    if attachment["width"] != atlasRegion["width"]:
+                        attachment["scaleX"] = attachment["width"]/atlasRegion["width"]
+                    if attachment["height"] != atlasRegion["height"]:
+                        attachment["scaleY"] = attachment["height"] / atlasRegion["height"]
             return skeletonDataCopy
-        except:
+        except Exception:
+            traceback.print_exc()
             print("Failed to fix skeleton data from .skel")
+            return skeletonData
 
