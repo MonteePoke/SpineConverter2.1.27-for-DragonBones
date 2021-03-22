@@ -4,7 +4,7 @@ Conversion tool between .skel and .json files, Spine version 2.1.27, DragonBones
 ## Requirements:
 Python 3 or nothing if using realeses
 ## Usage
-Drag'n'Drop .skel or .json file onto fastConverter.py
+Check out my [guide](https://steamcommunity.com/sharedfiles/filedetails/?id=2200465472) at Steam
 
 ## Thanks
 - To brachna for creating SpineConverter 2.1.27 
